@@ -1,0 +1,133 @@
+\documentclass{report}
+
+\newcommand{\note}[1]{$\langle$ #1 $\rangle$}
+
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Previous and Related Work}
+
+\subsection{Breadth first Search}
+\subsection{Uniform Cost Search}
+\subsection{A* Search}
+\subsection{Bootstrapping}
+\subsection{Learning During Search}
+\subsection{Probing Search}
+\subsection{Planning with Preferred Operators}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proposed Algorithm}
+
+
+\subsection{definitions}
+\begin{description}
+  \item[$\mathit{start}$] The initial state of the search \note{we aren't
+    considering multiple initial configurations? -- JTT}
+  \item[$d(n)$] an estimate of the number of actions laying between
+    some node $n$ and a goal node.
+  \item[$D(n)$] the number of transitions used to reach some node $n$
+    from the initial state of the search.
+  \item[$L(n)$] $L(n) = d(n) + D(n)$ is an estimate of the total
+    length of a plan passing through $n$, using the current partial
+    plan at $n$.
+  \item[$h(n)$] an estimate of the cost of the actions laying between
+    some node $n$ and a goal node.
+  \item[$g(n)$] the cost incurred when reaching $n$ from the initial
+    state by the current path.
+  \item[$f(n)$] an estimate of the total cost of a plan passing
+    through $n$, using the partial plan that currently results in $n$.
+  \item[$\phi(n)$] A set of features (for learning) related to the
+    search node $n$. \note{Note the distinction of node versus state
+      here.  I'm not sure if we mean to use nodes versus states, and I
+      can see arguments going both ways on this, but I'll argue for
+      nodes -- the experience of the search itself is key to getting
+      shit like this to work (I think), and the state is divorced from
+      the experience -- JTT}
+  \item[$\gamma$] The learned ranking function.
+  \item[$c(n,m)$] The cost of transitioning between nodes $n$ and $m$.
+  \item[$l(n,m)$] The number of transitions between nodes $n$ and $m$.
+\end{description}
+
+\subsection{Algorithm Description}
+
+  open is initially the set containing the initial state.\\
+  closed is initially the set containing the initial state, with $g(n) = 0$.\\
+
+  \begin{enumerate}
+  \item While we haven't found the goal
+  \item select the {\em single best} candidate out of open
+  \item perform breadth first search from this node for $N$ steps,
+    using the closed list from the outer algorithm to replace nodes
+    that are seen via a worse path with their better counterpart.
+  \item After $N$ steps, use $\gamma$ to order the frontier of the
+    inner breadth first search.
+  \item Select the best node according to $\gamma$, and perform
+    training, to learn $\gamma'$
+  \item Start over at the second step, using the single best node
+    according to $\gamma$. Replace $\gamma$ with $\gamma'$.
+  \end{enumerate}
+
+\subsubsection{Reservations about this approach}
+
+\begin{enumerate}
+  \item We should justify breadth first search as the right choice
+    (as opposed to uniform cost search)
+  \item How the hell are we going to set $N$, the look ahead
+    parameter.
+  \item $\phi$ is also problematic.  You have to balance having an
+    informed feature set with something that's relatively cheap to
+    compute.
+  \item The learning step is difficult enough that I broke it's
+    discussion out into a single section.
+\end{enumerate}
+
+\subsubsection{Accounting for other good ideas}
+  How do we incorporate the idea of preferred operators, planning with
+  probes, dovetailing over several algorithms that may potentially
+  produce catastrophic failure, and so on into our algorithm?
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Learning Step}
+
+\begin{enumerate}
+  \item Learn a function that predicts true $L$ or true $f$ from the
+    starting node, and the single best element of the frontier.
+  \item Use the path, from frontier node back to start, and all nodes
+    along it, to learn a function that predicts true $L$ or true $f$.
+  \item Learn a function that ranks the frontier of the inner search
+    appropriately.
+  \item Learn a function that ranks every layer of the inner search
+    appropriately.  So, for steps 1..$N$, and nodes along the path
+    from start to best along the frontier, learn a ranking which
+    places each node on the path as the best among its peers.
+\end{enumerate}
+
+\note{1, 2, and 3 follow directly from what we want to be able to do
+  -- rank the frontier appropriately so that we can pick the correct
+  next starting state.  Where they differ is in what is learned, 1 and
+  2 learn functions, 3 learns a ranking. 4 actually comes from the
+  same idea as 2, we want to learn $X$ but are worried that we may
+  have insufficient data to learn $X$.  What is the most data we can
+  reasonably get to learn $X$? Well, in this case, it's learning from
+  all of the frontiers generated by the local search step.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiments}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+\end{document}
