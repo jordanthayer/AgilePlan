@@ -28,14 +28,18 @@ RandomWalk::RandomWalk(
 
 // initialize the search
 void RandomWalk::initialize(){
-        *current = *g_initial_state;
+        SearchNode first = search_space.get_node(*current);
+        first.open_initial(0);
 }
 
 
 int RandomWalk::step(){
-        if(check_goal_and_set_plan(*current)){
+        SearchNode prev = search_space.get_node(*current);
+        prev.close();
+
+        if(check_goal_and_set_plan(*current))
                 return SOLVED;
-        }
+
         vector<const Operator *> applicable_ops;
         g_successor_generator->generate_applicable_ops(*current,
                                                        applicable_ops);
@@ -44,10 +48,12 @@ int RandomWalk::step(){
                 int selection = rand() % choices;
                 const Operator *op = applicable_ops[selection];
                 State next(*current,*op);
+                SearchNode next_node = search_space.get_node(next);
+                next_node.open(0,prev,op);
                 search_progress.inc_generated();
                 *current = next;
         }else{
-                initialize();
+                return FAILED;
         }
         return IN_PROGRESS;
 }
