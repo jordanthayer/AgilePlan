@@ -49,6 +49,10 @@ int SearchNode::get_h() const {
     return info.h;
 }
 
+Operator* SearchNode::get_op() const {
+        return (const_cast<Operator *> (info.creating_operator));
+}
+
 bool SearchNode::is_h_dirty() const {
     return info.h_is_dirty;
 }
@@ -177,8 +181,7 @@ void SearchSpace::trace_path(const State &goal_state,
         assert(iter != nodes->end());
         const SearchNodeInfo &info = iter->second;
         const Operator *op = info.creating_operator;
-        if (op == 0)
-            break;
+        if (op == 0) break;
         path.push_back(op);
         current_state = StateProxy(const_cast<state_var_t *>(info.parent_state));
     }

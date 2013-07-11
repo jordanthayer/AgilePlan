@@ -38,6 +38,7 @@ public:
     int get_g() const;
     int get_real_g() const;
     int get_h() const;
+    Operator* get_op() const;
     const state_var_t *get_parent_buffer() const;
 
     void open_initial(int h);

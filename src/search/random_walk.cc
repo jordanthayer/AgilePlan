@@ -28,28 +28,32 @@ RandomWalk::RandomWalk(
 
 // initialize the search
 void RandomWalk::initialize(){
-        SearchNode first = search_space.get_node(*current);
+        SearchNode first = search_space.get_node(*g_initial_state);
         first.open_initial(0);
+        *current = first.get_state();
+        cout << "Random Walk Initialized" << endl;
 }
 
 
 int RandomWalk::step(){
         SearchNode prev = search_space.get_node(*current);
+        State pstate = prev.get_state();
         prev.close();
 
-        if(check_goal_and_set_plan(*current))
+        if(check_goal_and_set_plan(pstate))
                 return SOLVED;
 
         vector<const Operator *> applicable_ops;
-        g_successor_generator->generate_applicable_ops(*current,
+        g_successor_generator->generate_applicable_ops(pstate,
                                                        applicable_ops);
         int choices = applicable_ops.size();
         if(choices > 0){
                 int selection = rand() % choices;
                 const Operator *op = applicable_ops[selection];
-                State next(*current,*op);
+                State next(pstate, *op);
                 SearchNode next_node = search_space.get_node(next);
-                next_node.open(0,prev,op);
+                if(!next_node.is_closed())
+                        next_node.open(0,prev,op);
                 search_progress.inc_generated();
                 *current = next;
         }else{
