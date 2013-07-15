@@ -29,20 +29,41 @@ FloodHillclimber::FloodHillclimber(const Options &opts)
 }
 
 int FloodHillclimber::step(){
-        int choices;
-        int selection;
         pair<int, vector<vector<State> > > flood_ret = flood();
+        vector<State>::const_iterator fs;
+        State best = frontier[0];
+        SearchNode bnode = search_space.get_node(best);
+        int best_h = bnode.get_h();
+        int current_h = 42;
 
         flood_ret.second.clear();
+
         switch(flood_ret.first){
         case IN_PROGRESS:
-                choices = frontier.size();
-                selection = rand() % choices;
-                *current = frontier[selection];
+
+                // not sure how we're going to do the heuristic computation
+                // it would be nice to do it right here, but we *may* have
+                // to do it in the flooding step due to landmark sensitive
+                // heuristics -- JTT
+
+                for(fs = frontier.begin(); fs != frontier.end(); fs++){
+                        State cstate = *fs;
+                        SearchNode current_sn = search_space.get_node(cstate);
+                        current_h = current_sn.get_h();
+                        if(current_h < best_h){
+                                best_h = current_h;
+                                best = cstate;
+                        }
+                }
+
+                *current = best;
                 frontier.clear();
                 return IN_PROGRESS;
-        default: return flood_ret.first;
+
+        default:
+                return flood_ret.first;
         }
+        return flood_ret.first;
 }
 
 
