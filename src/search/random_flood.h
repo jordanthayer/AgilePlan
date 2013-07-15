@@ -26,7 +26,7 @@ private:
 
 protected:
         int step();
-        pair<int,map<State,bool> > flood();
+        pair<int,vector<vector<State> > > flood();
         virtual void initialize();
 
 public:
