@@ -38,11 +38,12 @@ void RandomFlood::initialize(){
 }
 
 
-int RandomFlood::flood(){
+pair<int, map<State,bool> > RandomFlood::flood(){
         cout << "Flooding step" << endl;
         assert(frontier.size() == 0);
         vector<State> next_front;
         vector<State>::const_iterator s;
+        vector<vector <State> >opens;
         vector<const Operator *>::const_iterator op;
         map<State, bool> local_closed;
         pair<map<State,bool>::iterator, bool> is_it_in;
@@ -54,7 +55,7 @@ int RandomFlood::flood(){
                         SearchNode prev = search_space.get_node(*s);
                         prev.close();
                         if(check_goal_and_set_plan(*s))
-                                return SOLVED;
+                                return make_pair(SOLVED, local_closed);
                         vector<const Operator *> succ_ops;
                         g_successor_generator->generate_applicable_ops(*s,
                                                                        succ_ops);
@@ -75,16 +76,16 @@ int RandomFlood::flood(){
                 }
                 frontier = next_front;
         }
-        local_closed.clear();
         cout << "Done flooding" << endl;
-        return IN_PROGRESS;
+        return make_pair(IN_PROGRESS,local_closed);
 }
 
 int RandomFlood::step(){
         int choices;
         int selection;
-        int flood_ret = flood();
-        switch(flood_ret){
+        pair<int, map<State,bool> > flood_ret = flood();
+        flood_ret.second.clear();
+        switch(flood_ret.first){
         case IN_PROGRESS:
                 //select random element of the frontier, move to it
                 choices = frontier.size();
@@ -99,7 +100,7 @@ int RandomFlood::step(){
                 // just return solved
                 return SOLVED;
         default:
-                return flood_ret;
+                return flood_ret.first;
         }
 }
 
