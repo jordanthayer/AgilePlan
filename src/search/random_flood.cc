@@ -1,4 +1,4 @@
-/**
+ /**
  * \file random_flood.cc
  *
  *
@@ -20,6 +20,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <set>
+
 using namespace std;
 
 RandomFlood::RandomFlood(const Options &opts)
@@ -43,6 +44,8 @@ int RandomFlood::flood(){
         vector<State> next_front;
         vector<State>::const_iterator s;
         vector<const Operator *>::const_iterator op;
+        map<State, bool> local_closed;
+        pair<map<State,bool>::iterator, bool> is_it_in;
 
         frontier.push_back(*current);
         for(int i = 0; i < flood_size; i++){
@@ -58,14 +61,21 @@ int RandomFlood::flood(){
                         for(op = succ_ops.begin(); op != succ_ops.end(); op++){
                                 State next(*s, **op);
                                 search_progress.inc_generated();
-                                SearchNode next_node = search_space.get_node(next);
-                                if (next_node.is_new())
-                                        next_node.open(0, prev, *op);
-                                next_front.push_back(next);
+
+                                is_it_in =
+                                        local_closed.insert(make_pair
+                                                            (next, true));
+                                if(is_it_in.second != false){ // NEW ENTRY!
+                                        SearchNode next_node = search_space.get_node(next);
+                                        if (next_node.is_new())
+                                                next_node.open(0, prev, *op);
+                                        next_front.push_back(next);
+                                        }
                         }
                 }
                 frontier = next_front;
         }
+        local_closed.clear();
         cout << "Done flooding" << endl;
         return IN_PROGRESS;
 }
