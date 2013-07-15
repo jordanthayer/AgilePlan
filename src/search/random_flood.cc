@@ -34,12 +34,11 @@ void RandomFlood::initialize(){
         SearchNode first = search_space.get_node(*g_initial_state);
         first.open_initial(0);
         *current = first.get_state();
-        cout << "Random Walk Initialized" << endl;
+        cout << "Random Flood Initialized" << endl;
 }
 
 
 pair<int,vector<vector<State> > > RandomFlood::flood(){
-        cout << "Flooding step" << endl;
         assert(frontier.size() == 0);
         vector<State> next_front;
         vector<State>::const_iterator s;
@@ -50,7 +49,6 @@ pair<int,vector<vector<State> > > RandomFlood::flood(){
 
         frontier.push_back(*current);
         for(int i = 0; i < flood_size; i++){
-                cout << i << endl;
                 for(s = frontier.begin(); s != frontier.end(); s++){
                         SearchNode prev = search_space.get_node(*s);
                         prev.close();
@@ -78,7 +76,6 @@ pair<int,vector<vector<State> > > RandomFlood::flood(){
                 frontier = next_front;
         }
         local_closed.clear();
-        cout << "Done flooding" << endl;
         return make_pair(IN_PROGRESS,opens);
 }
 
