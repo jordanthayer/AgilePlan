@@ -20,11 +20,12 @@
 
 class RandomFlood : public SearchEngine {
 private:
-        State * current;
-        int flood_size;
-        vector<State> frontier;
 
 protected:
+        State * current;
+        vector<State> frontier;
+        int flood_size;
+
         int step();
         pair<int,vector<vector<State> > > flood();
         virtual void initialize();
