@@ -25,8 +25,8 @@ using namespace std;
 
 RandomFlood::RandomFlood(const Options &opts)
   : SearchEngine(opts),
-    flood_size(opts.get<int>("flood_size")){
-        frontier.push_back(State(*g_initial_state));
+    flood_size(opts.get<int>("flood_size")),
+    heuristics(opts.get<vector<Heuristic *> >("heuristics")){
 }
 
 // initialize the search
@@ -112,6 +112,8 @@ static SearchEngine *_parse(OptionParser &parser) {
     SearchEngine::add_options_to_parser(parser);
     parser.add_option<int>("flood_size", 10,
                            "number of steps before picking frontier node");
+    parser.add_list_option<Heuristic *>("heuristics", vector<Heuristic *>(),
+                                        "Climb according to these");
     Options opts = parser.parse();
     RandomFlood *engine = 0;
     if (!parser.dry_run()) {

@@ -24,9 +24,8 @@ using namespace std;
 
 
 FloodHillclimber::FloodHillclimber(const Options &opts)
-        : RandomFlood(opts),
-          heuristics(opts.get<vector<Heuristic *> >("heuristics")){
-        current = new State(*g_initial_state);
+        : RandomFlood(opts){
+        search_progress.inc_evaluated_states();
 }
 
 int FloodHillclimber::step(){
@@ -46,7 +45,6 @@ int FloodHillclimber::step(){
                 // it would be nice to do it right here, but we *may* have
                 // to do it in the flooding step due to landmark sensitive
                 // heuristics -- JTT
-
                 for(fs = frontier.begin(); fs != frontier.end(); fs++){
                         State cstate = *fs;
                         SearchNode current_sn = search_space.get_node(cstate);
@@ -56,8 +54,6 @@ int FloodHillclimber::step(){
                                 best = cstate;
                         }
                 }
-
-                *current = best;
                 frontier.clear();
                 return IN_PROGRESS;
 

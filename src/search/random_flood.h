@@ -17,12 +17,16 @@
 #include "evaluator.h"
 #include "search_progress.h"
 #include "state_var_t.h"
+#include "heuristic.h"
+
+class Heuristic;
 
 class RandomFlood : public SearchEngine {
 
 protected:
-        vector<State> frontier;
         int flood_size;
+        vector<State> frontier;
+        vector<Heuristic *> heuristics;
 
         int step();
         pair<int,vector<vector<State> > > flood();
