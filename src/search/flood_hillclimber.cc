@@ -35,26 +35,26 @@ int FloodHillclimber::step(){
         SearchNode bnode = search_space.get_node(best);
         int best_h = bnode.get_h();
         int current_h = 42;
+        vector<State> bests;
 
         flood_ret.second.clear();
 
         switch(flood_ret.first){
         case IN_PROGRESS:
-
-                // not sure how we're going to do the heuristic computation
-                // it would be nice to do it right here, but we *may* have
-                // to do it in the flooding step due to landmark sensitive
-                // heuristics -- JTT
-                for(fs = frontier.begin(); fs != frontier.end(); fs++){
-                        State cstate = *fs;
-                        SearchNode current_sn = search_space.get_node(cstate);
-                        current_h = current_sn.get_h();
-                        if(current_h < best_h){
-                                best_h = current_h;
-                                best = cstate;
+                for(int i = 0; i < heuristics.size(); i++){
+                        for(fs = frontier.begin(); fs != frontier.end(); fs++){
+                                State cstate = *fs;
+                                heuristics[i]->evaluate(cstate);
+                                current_h = heuristics[i]->get_value();
+                                if(current_h < best_h){
+                                        best_h = current_h;
+                                        best = cstate;
+                                }
                         }
+                        bests.push_back(best);
                 }
                 frontier.clear();
+                frontier = bests;
                 return IN_PROGRESS;
 
         default:
