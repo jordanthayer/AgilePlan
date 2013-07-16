@@ -19,10 +19,8 @@
 #include "state_var_t.h"
 
 class RandomFlood : public SearchEngine {
-private:
 
 protected:
-        State * current;
         vector<State> frontier;
         int flood_size;
 

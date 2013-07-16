@@ -26,14 +26,14 @@ using namespace std;
 RandomFlood::RandomFlood(const Options &opts)
   : SearchEngine(opts),
     flood_size(opts.get<int>("flood_size")){
-        current = new State(*g_initial_state);
+        frontier.push_back(State(*g_initial_state));
 }
 
 // initialize the search
 void RandomFlood::initialize(){
         SearchNode first = search_space.get_node(*g_initial_state);
         first.open_initial(0);
-        *current = first.get_state();
+        frontier.push_back(first.get_state());
         cout << "Random Flood Initialized" << endl;
 }
 
@@ -47,7 +47,6 @@ pair<int,vector<vector<State> > > RandomFlood::flood(){
         map<State, bool> local_closed;
         pair<map<State,bool>::iterator, bool> is_it_in;
 
-        frontier.push_back(*current);
         for(int i = 0; i < flood_size; i++){
                 for(s = frontier.begin(); s != frontier.end(); s++){
                         SearchNode prev = search_space.get_node(*s);
@@ -89,9 +88,7 @@ int RandomFlood::step(){
                 //select random element of the frontier, move to it
                 choices = frontier.size();
                 selection = rand() % choices;
-                *current = frontier[selection];
-                frontier.clear();
-                return IN_PROGRESS;
+                break;
         case FAILED:
                 // possible restart
                 return FAILED;
@@ -101,6 +98,11 @@ int RandomFlood::step(){
         default:
                 return flood_ret.first;
         }
+
+        State current = frontier[selection];
+        frontier.clear();
+        frontier.push_back(current);
+        return IN_PROGRESS;
 }
 
 static SearchEngine *_parse(OptionParser &parser) {
