@@ -34,6 +34,8 @@ void RandomFlood::initialize(){
         SearchNode first = search_space.get_node(*g_initial_state);
         first.open_initial(0);
         frontier.push_back(first.get_state());
+        for (size_t i = 0; i < heuristics.size(); i++)
+                heuristics[i]->evaluate(*g_initial_state);
         cout << "Random Flood Initialized" << endl;
 }
 
@@ -59,12 +61,14 @@ pair<int,vector<vector<State> > > RandomFlood::flood(){
                         for(op = succ_ops.begin(); op != succ_ops.end(); op++){
                                 State next(*s, **op);
                                 search_progress.inc_generated();
-
                                 is_it_in =
                                         local_closed.insert(make_pair
                                                             (next, true));
                                 if(is_it_in.second != false){ // NEW ENTRY!
                                         SearchNode next_node = search_space.get_node(next);
+                                        for (size_t i = 0; i < heuristics.size(); ++i) {
+                                                heuristics[i]->reach_state(*s,**op, next);
+                                        }
                                         if (next_node.is_new())
                                                 next_node.open(0, prev, *op);
                                         next_front.push_back(next);
