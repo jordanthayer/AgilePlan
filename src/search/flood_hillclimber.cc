@@ -24,7 +24,8 @@ using namespace std;
 
 
 FloodHillclimber::FloodHillclimber(const Options &opts)
-  : RandomFlood(opts){
+        : RandomFlood(opts),
+          heuristics(opts.get<vector<Heuristic *> >("heuristics")){
         current = new State(*g_initial_state);
 }
 
@@ -74,6 +75,8 @@ static SearchEngine *_parse(OptionParser &parser) {
     SearchEngine::add_options_to_parser(parser);
     parser.add_option<int>("flood_size", 10,
                            "number of steps before picking frontier node");
+    parser.add_list_option<Heuristic *>("heuristics", vector<Heuristic *>(),
+                                        "Climb according to these");
     Options opts = parser.parse();
     FloodHillclimber *engine = 0;
     if (!parser.dry_run()) {

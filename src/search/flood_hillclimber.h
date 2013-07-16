@@ -11,9 +11,15 @@
 #define FLOOD_HILLCLIMBER
 
 #include "random_flood.h"
+#include "heuristic.h"
+
+class Heuristic;
 
 class FloodHillclimber : public RandomFlood{
+
 protected:
+        vector<Heuristic *> heuristics;
+
         int step();
 
 public:
