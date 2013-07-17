@@ -1,0 +1,23 @@
+We can probably do single-step global corrections as an extension of
+the heuristic class.  We can get parent pointers from the search node,
+and compute the average single step error as a result.
+
+Path-based single step corrections require that we associate data with
+each node in the search space.  We could do this by expanding the
+contents of a search node / search state.  This is probably unfair to
+the algorithms that don't require information of that sort.  Instead
+we'll have to keep a hashtable inside of the heuristic.
+
+Still not sure how to deal with helpful actions along the frontier.
+
+Need to figure out batch experiment running,
+
+http://www.fast-downward.org/ScriptUsage
+
+talks about how to do this with the internal methods.  It's not going
+to produce box-plots or anything other than a set of win counts, but
+it's a good start.
+
+Regression shouldn't be too hard considering what we have
+implemented.  We just need to take a longer look at what is considered
+to be best in terms of the search code.
