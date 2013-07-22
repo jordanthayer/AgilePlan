@@ -58,6 +58,7 @@ HEADERS = \
 	  random_walk.h \
 	  random_flood.h \
 	  flood_hillclimber.h \
+	  global_ss_correction.h \
 
 ## Each of the following "HEADERS += ..." constructs defines a
 ## "plugin" feature that can be enabled or disabled by simply
