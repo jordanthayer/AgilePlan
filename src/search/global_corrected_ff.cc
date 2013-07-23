@@ -8,6 +8,8 @@
  */
 
 #include "global_corrected_ff.h"
+#include "option_parser.h"
+#include "plugin.h"
 
 GlobalCorrectedFF::GlobalCorrectedFF(const Options &options)
         : FFHeuristic(options){
@@ -37,3 +39,13 @@ GlobalCorrectedFF::~GlobalCorrectedFF(){
 }
 
 
+static ScalarEvaluator *_parse(OptionParser &parser) {
+    Heuristic::add_options_to_parser(parser);
+    Options opts = parser.parse();
+    if (parser.dry_run())
+        return 0;
+    else
+        return new GlobalCorrectedFF(opts);
+}
+
+static Plugin<ScalarEvaluator> _plugin("ff-global-correction", _parse);

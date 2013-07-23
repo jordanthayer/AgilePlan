@@ -17,7 +17,7 @@
 class FFHeuristic;
 class GlobalSSCorrection;
 
-class GlobalCorrectedFF: protected FFHeuristic, protected GlobalSSCorrection{
+class GlobalCorrectedFF: public FFHeuristic, protected GlobalSSCorrection{
 
 protected:
         int get_heuristic();
