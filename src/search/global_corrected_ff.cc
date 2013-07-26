@@ -16,7 +16,8 @@ GlobalCorrectedFF::GlobalCorrectedFF(const Options &options)
 }
 
 int GlobalCorrectedFF::get_heuristic(){
-        return this->get_correction_factor() * FFHeuristic::get_heuristic();
+        return (1 + this->get_correction_factor())
+                * FFHeuristic::get_heuristic();
 }
 
 void GlobalCorrectedFF::observe(SearchNode parent, SearchNode child){

@@ -34,7 +34,11 @@ NodeAssoc::~NodeAssoc(){
 
 
 void* NodeAssoc::get_associated_data(const State &state){
-        return (*nodeData)[StateProxy(&state)];
+        if(nodeData->find((StateProxy(&state))) == nodeData->end()){
+                return 0;
+        }else{
+                return (*nodeData)[StateProxy(&state)];
+        }
 }
 
 

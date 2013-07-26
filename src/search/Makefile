@@ -62,6 +62,7 @@ HEADERS = \
 	  global_corrected_ff.h \
 	  node_assoc.h \
 	  path_ss_correction.h \
+	  path_corrected_ff.h \
 
 ## Each of the following "HEADERS += ..." constructs defines a
 ## "plugin" feature that can be enabled or disabled by simply

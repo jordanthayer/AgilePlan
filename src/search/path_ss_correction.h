@@ -22,8 +22,10 @@ class PathSSCorrection {
 
 protected:
         NodeAssoc *seen_error;
+        int cached_correction_factor;
 
         int get_correction_factor(SearchNode *node);
+        int get_correction_factor(const State &state);
         virtual void observe(SearchNode parent, SearchNode child) = 0;
 
 public:
